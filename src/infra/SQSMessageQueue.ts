@@ -1,54 +1,74 @@
-import { SQS } from 'aws-sdk';
+import SQSClient from "./sqsClient";
 import { MessageQueue } from '../domain/ports/MessageQueue';
-import { QueueMessage } from '../domain/entities/QueueMessage';
-import { QueueMessageBody } from '../domain/entities/QueueMessageBody';
+import { SendMessageCommand, ReceiveMessageCommand, DeleteMessageCommand } from "@aws-sdk/client-sqs";
+import { QueueMessage } from "../domain/entities/QueueMessage";
 
 export class SQSMessageQueue implements MessageQueue {
-  private sqs: SQS;
 
   constructor(
-    private readonly queueUrl: string,
-    region: string = 'us-east-1'
+    private client: typeof SQSClient,
+    private queueUrl: string
   ) {
-    this.sqs = new SQS({ region });
   }
 
   async receiveMessages(): Promise<QueueMessage[]> {
     const params = {
       QueueUrl: this.queueUrl,
-      MaxNumberOfMessages: 10,
-      WaitTimeSeconds: 20,
-      VisibilityTimeoutSeconds: 300
+      MaxNumberOfMessages: 1, // Número máximo de mensagens a receber
     };
 
-    const result = await this.sqs.receiveMessage(params).promise();
+    const data = await this.client.send(new ReceiveMessageCommand(params));
     
-    if (!result.Messages) {
+    if (!data.Messages) {
       return [];
     }
 
-    return result.Messages.map(message => ({
-      id: message.MessageId || '',
-      body: message.Body || '',
-      receiptHandle: message.ReceiptHandle || ''
-    }));
+    return data.Messages.map(message => {
+      const body = message.Body ? JSON.parse(message.Body) : {};
+      if(body.videoPath){
+        return {
+          id: message.ReceiptHandle || '',
+          videoPath: body.videoPath || '',
+          status: body.status || 'PENDING'
+        } as QueueMessage;
+      } else{
+        return {
+          id: message.ReceiptHandle || '',
+          zipPath: body.zipPath || '',
+          status: body.status || 'PENDING'
+        } as QueueMessage;
+      }
+    });
   }
 
-  async deleteMessage(message: QueueMessage): Promise<void> {
-    const params = {
-      QueueUrl: this.queueUrl,
-      ReceiptHandle: message.receiptHandle
-    };
-
-    await this.sqs.deleteMessage(params).promise();
+  async deleteMessage(id: string): Promise<boolean> {
+    try {
+      const params = {
+        QueueUrl: this.queueUrl,
+        ReceiptHandle: id,
+      };
+  
+      await this.client.send(new DeleteMessageCommand(params));
+      return true;
+    } catch (err) {
+      console.error(err);
+    }
+    return false;
   }
 
-  async sendMessage(messageBody: QueueMessageBody): Promise<void> {
-    const params = {
-      QueueUrl: this.queueUrl,
-      MessageBody: JSON.stringify(messageBody)
-    };
-
-    await this.sqs.sendMessage(params).promise();
+  async sendMessage(messageBody: QueueMessage): Promise<boolean> {
+    try {
+      const params = {
+        QueueUrl: this.queueUrl,
+        MessageBody: JSON.stringify(messageBody),
+      };
+  
+      await this.client.send(new SendMessageCommand(params));
+      
+      return true;
+    } catch (err) {
+      console.error(err);
+    }
+    return false;
   }
 }

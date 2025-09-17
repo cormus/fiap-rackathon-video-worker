@@ -1,12 +1,13 @@
-FROM node:14
+FROM node:18
 
 WORKDIR /app
 
-COPY app app
+COPY . .
 
-RUN cd app && npm install
+RUN sudo apt update && sudo apt install ffmpeg
+RUN npm install && npm run build 
 
 EXPOSE 4000
 
 # Command to run the application
-CMD ["node", "./index.js"]
+CMD ["npm", "run", "start"]
