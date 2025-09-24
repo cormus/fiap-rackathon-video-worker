@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN sudo apt update && sudo apt install ffmpeg
+RUN apt update && apt install -y ffmpeg
 RUN npm install && npm run build 
 
 EXPOSE 4000

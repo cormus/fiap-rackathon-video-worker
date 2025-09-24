@@ -33,11 +33,11 @@ jobs:
       run: cd app && npm install
 
     - name: Rodar testes com cobertura
-      run: cd app && npm test
+      run: npm run test
 
     - name: Validar cobertura mínima
       run: |
-        COVERAGE=$(node -pe "require('./app/coverage/coverage-summary.json').total.statements.pct")
+        COVERAGE=$(node -pe "require('./coverage/coverage-summary.json').total.statements.pct")
         echo "Cobertura de statements: $COVERAGE%"
         if [ \"$COVERAGE\" -lt 80 ]; then
           echo "Cobertura abaixo de 80%"

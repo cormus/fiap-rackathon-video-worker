@@ -6,3 +6,10 @@ services:
       dockerfile: Dockerfile
     ports:
       - "4000:4000"
+    environment:
+      - BUKET_NAME=bucket-video-processing-fiap
+      - QUEUE_VIDEO=https://sqs.us-east-2.amazonaws.com/087983370089/video-queue
+      - QUEUE_IMAGE=https://sqs.us-east-2.amazonaws.com/087983370089/image-zip-queue
+      - AWS_REGION=us-east-2
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}

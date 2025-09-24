@@ -375,6 +375,9 @@ app.post("/video-processar-execute", async (req, res) => {
 
 
 setInterval(async ()  => {
+
+  console.log("Iniciando processamento de vídeos na fila...");
+
   const folderUtil = new FolderUtil();
   const s3FileStorage = new S3FileStorage(BUKET_NAME, REGION);
   const sqsVideoQueue = new SQSMessageQueue(SQSClient, QUEUE_VIDEO);
@@ -390,5 +393,5 @@ setInterval(async ()  => {
 
 
 app.listen(4000, () => {
-  console.log('Servidor rodando na porta 3000');
+  console.log('Servidor rodando na porta 4000');
 });

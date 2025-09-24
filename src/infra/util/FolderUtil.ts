@@ -56,7 +56,7 @@ export class FolderUtil implements FolderManager {
    */
   getFileExtension(fileName: string): string {
     const ext = fileName.split('.').pop();
-    return ext ? ext : '';
+    return ext && fileName != ext ? ext: '';
   }
 
   tempDirNameGenerator(): string {
