@@ -30,7 +30,7 @@ jobs:
         node-version: '16'
 
     - name: Instalar dependências
-      run: cd app && npm install
+      run: npm install
 
     - name: Rodar testes com cobertura
       run: npm run test
