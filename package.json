@@ -1,7 +1,7 @@
 {
   "name": "teste02",
   "version": "1.0.0",
-  "description": "",
+  "description": "Processamento de vídeo em imagens",
   "main": "index.js",
   "scripts": {
     "build": "npx tsc",
