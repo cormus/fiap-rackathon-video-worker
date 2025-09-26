@@ -2,7 +2,7 @@ name: Deploy Node.js App no AWS EKS
 
 env:
   AWS_REGION: us-east-2
-  AWS_ASSUME_ROLE: arn:aws:iam::881307377501:role/github-actions-fiap-pipelike
+  AWS_ASSUME_ROLE: arn:aws:iam::087983370089:role/fiap-pos
   #ECR_REGISTRY: 881307377501.dkr.ecr.us-east-2.amazonaws.com/cormus
   ECR_REPOSITORY: cormus
 
